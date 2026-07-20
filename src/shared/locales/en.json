@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "no_data": "No data available",
+    "back": "Back",
+    "submit": "Submit",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "loginDesc": "Login to admin dashboard",
+    "email": "Email",
+    "password": "Password"
+  },
+  "landing": {
+    "greeting": "My Portfolio",
+    "subtitle": "A collection of projects and technologies I've worked on.",
+    "viewProjects": "View Projects",
+    "viewTechs": "Technologies",
+    "projects": "Projects",
+    "projectsDesc": "Projects I've built",
+    "techs": "Technologies",
+    "techsDesc": "Technologies I work with",
+    "contact": "Contact",
+    "contactDesc": "Get in touch for collaboration"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "recentProjects": "Recent Projects",
+    "techStack": "Tech Stack"
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "techs": "Technologies",
+    "contact": "Contact"
+  }
+}

@@ -1,0 +1,18 @@
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .transition-base {
+    @apply transition-all duration-[var(--transition-normal)];
+  }
+}

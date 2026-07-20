@@ -1,0 +1,68 @@
+{
+  "name": "portfosin-fe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{vue,ts,tsx,css}\"",
+    "typecheck": "vue-tsc --noEmit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "pinia": "^3.0.2",
+    "@tanstack/vue-query": "^5.72.2",
+    "axios": "^1.8.4",
+    "@vueuse/core": "^13.1.0",
+    "vue-i18n": "^11.1.2",
+    "zod": "^3.24.3",
+    "vee-validate": "^4.15.0",
+    "@vee-validate/zod": "^4.15.0",
+    "lucide-vue-next": "^0.487.0",
+    "tailwind-merge": "^3.3.0",
+    "clsx": "^2.1.1",
+    "class-variance-authority": "^0.7.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "vite": "^6.3.2",
+    "@tanstack/vue-query-devtools": "^5.72.2",
+    "typescript": "~5.8.3",
+    "vue-tsc": "^2.2.8",
+    "tailwindcss": "^4.1.4",
+    "@tailwindcss/vite": "^4.1.4",
+    "postcss": "^8.5.3",
+    "autoprefixer": "^10.4.21",
+    "@eslint/js": "^9.25.0",
+    "eslint": "^9.25.0",
+    "eslint-plugin-vue": "^10.1.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "vitest": "^3.1.2",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^26.0.0",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.2"
+  },
+  "lint-staged": {
+    "*.{vue,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,md}": [
+      "prettier --write"
+    ]
+  }
+}

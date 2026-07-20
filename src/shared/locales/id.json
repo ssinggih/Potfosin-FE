@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "create": "Buat",
+    "search": "Cari",
+    "no_data": "Tidak ada data",
+    "back": "Kembali",
+    "submit": "Kirim",
+    "logout": "Keluar"
+  },
+  "auth": {
+    "login": "Masuk",
+    "loginDesc": "Masuk ke dashboard admin",
+    "email": "Email",
+    "password": "Kata Sandi"
+  },
+  "landing": {
+    "greeting": "Portfolio Saya",
+    "subtitle": "Kumpulan proyek dan teknologi yang pernah saya kerjakan.",
+    "viewProjects": "Lihat Proyek",
+    "viewTechs": "Teknologi",
+    "projects": "Proyek",
+    "projectsDesc": "Proyek yang pernah saya kerjakan",
+    "techs": "Teknologi",
+    "techsDesc": "Teknologi yang saya kuasai",
+    "contact": "Kontak",
+    "contactDesc": "Hubungi saya untuk kolaborasi"
+  },
+  "dashboard": {
+    "title": "Dashboard Admin",
+    "recentProjects": "Proyek Terbaru",
+    "techStack": "Tech Stack"
+  },
+  "nav": {
+    "home": "Beranda",
+    "projects": "Proyek",
+    "techs": "Teknologi",
+    "contact": "Kontak"
+  }
+}
