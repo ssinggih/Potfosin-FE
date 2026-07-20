@@ -44,7 +44,7 @@
         <button
           v-else
           class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          @click="$emit('openLogin')"
+          @click="emit('openLogin')"
         >
           {{ $t('auth.login') }}
         </button>
@@ -59,8 +59,10 @@
             :key="item.section"
             class="rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
             @click="
-              scrollToSection(item.section)
-              isMobileOpen = false
+              () => {
+                scrollToSection(item.section)
+                isMobileOpen = false
+              }
             "
           >
             {{ localeStore.locale === 'id' ? item.label : item.labelEn }}
@@ -79,8 +81,9 @@ import { useLocaleStore } from '@/stores/localeStore'
 import { NAV_ITEMS } from '@/constants'
 import { Menu, X } from 'lucide-vue-next'
 
-defineEmits<{ openLogin: [] }>()
-
+const emit = defineEmits<{
+  (e: 'openLogin'): void
+}>()
 const router = useRouter()
 const authStore = useAuthStore()
 const localeStore = useLocaleStore()
