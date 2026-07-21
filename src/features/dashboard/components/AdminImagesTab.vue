@@ -198,7 +198,7 @@
               </button>
             </div>
             <div
-              class="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent p-3 pt-8"
+              class="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/50 to-transparent p-3 pt-8"
             >
               <span class="text-xs text-white/90">{{ img.projectName }}</span>
             </div>

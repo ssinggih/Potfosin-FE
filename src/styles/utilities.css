@@ -13,6 +13,6 @@
   }
 
   .transition-base {
-    @apply transition-all duration-[var(--transition-normal)];
+    @apply transition-all duration-(--transition-normal);
   }
 }

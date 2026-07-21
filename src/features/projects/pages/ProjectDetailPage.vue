@@ -25,7 +25,7 @@
               @error="onGalleryImgError"
             />
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"
+              class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"
             />
             <div class="absolute right-4 bottom-4 left-4 sm:bottom-6 sm:left-6">
               <div class="flex flex-wrap items-center gap-2">
@@ -190,7 +190,7 @@
                 class="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 @error="onGalleryImgError"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <div class="absolute bottom-3 left-3">
                 <span
                   class="rounded-md bg-black/40 px-2 py-0.5 text-xs text-white/90 capitalize backdrop-blur-sm"

@@ -10,7 +10,7 @@
         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         @error="onImgError"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+      <div class="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
       <div class="absolute top-2 right-2 flex gap-1.5">
         <span
           class="rounded-full px-2.5 py-0.5 text-xs font-medium shadow-sm backdrop-blur-sm"
