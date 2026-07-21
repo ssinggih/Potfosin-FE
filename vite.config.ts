@@ -29,6 +29,12 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/images': {
+        target: 'https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/images/, ''),
+      },
     },
   },
 })

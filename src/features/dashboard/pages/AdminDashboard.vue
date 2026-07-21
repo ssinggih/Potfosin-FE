@@ -237,62 +237,92 @@
                 Tambah Tech
               </Button>
             </div>
+
+            <div class="mb-4 flex items-center gap-3">
+              <div class="relative max-w-sm flex-1">
+                <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  v-model="techSearch"
+                  type="text"
+                  placeholder="Search tech..."
+                  class="w-full rounded-lg border bg-white py-2 pr-4 pl-9 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500"
+                />
+              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400">
+                {{ filteredTechs.length }} tech{{ filteredTechs.length !== 1 ? 's' : '' }}
+              </span>
+            </div>
+
             <div v-if="techsLoading" class="py-12 text-center text-gray-500">
               {{ $t('common.loading') }}
             </div>
-            <Card v-else class="overflow-x-auto">
-              <table class="w-full text-left text-sm">
-                <thead>
-                  <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
-                    <th class="px-4 py-3 font-medium text-gray-500">Nama</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Slug</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Icon</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="t in techList"
-                    :key="t.id"
-                    class="border-b hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900"
-                  >
-                    <td class="px-4 py-3 font-medium">
-                      {{ t.name }}
-                    </td>
-                    <td class="px-4 py-3 text-gray-500">/{{ t.slug }}</td>
-                    <td class="px-4 py-3">
-                      <img
-                        v-if="t.icon_url"
-                        :src="t.icon_url"
-                        :alt="t.name"
-                        class="h-6 w-6 object-contain"
-                        @error="onTechIconError"
-                      />
-                      <span
-                        v-else
-                        class="flex h-6 w-6 items-center justify-center rounded-md bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                        >{{ t.name.charAt(0).toUpperCase() }}</span
-                      >
-                    </td>
-                    <td class="px-4 py-3">
-                      <div class="flex gap-2">
-                        <Button variant="ghost" size="sm" @click="openTechForm(t)">
-                          <Edit class="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="sm" @click="confirmDeleteTech(t.id)">
-                          <Trash2 class="h-3.5 w-3.5 text-red-500" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr v-if="!techList.length">
-                    <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                      {{ $t('common.no_data') }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Card>
+            <template v-else>
+              <Card class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead>
+                    <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+                      <th class="px-4 py-3 font-medium text-gray-500">Nama</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Slug</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Icon</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="t in paginatedTechs"
+                      :key="t.id"
+                      class="border-b hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900"
+                    >
+                      <td class="px-4 py-3 font-medium">
+                        {{ t.name }}
+                      </td>
+                      <td class="px-4 py-3 text-gray-500">/{{ t.slug }}</td>
+                      <td class="px-4 py-3">
+                        <img
+                          v-if="t.icon_url"
+                          :src="proxyR2Url(t.icon_url)"
+                          :alt="t.name"
+                          class="h-6 w-6 object-contain"
+                          @error="onTechIconError"
+                        />
+                        <span
+                          v-else
+                          class="flex h-6 w-6 items-center justify-center rounded-md bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                          >{{ t.name.charAt(0).toUpperCase() }}</span
+                        >
+                      </td>
+                      <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                          <Button variant="ghost" size="sm" @click="openTechForm(t)">
+                            <Edit class="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" @click="confirmDeleteTech(t.id)">
+                            <Trash2 class="h-3.5 w-3.5 text-red-500" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="!filteredTechs.length">
+                      <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                        {{ techSearch ? 'No tech found.' : $t('common.no_data') }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Card>
+
+              <div v-if="techTotalPages > 1" class="mt-4 flex items-center justify-center gap-2">
+                <Button variant="outline" size="sm" :disabled="!techHasPrev" @click="techPrev">
+                  <ChevronLeft class="h-4 w-4" />
+                </Button>
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                  {{ techCurrentPage }} / {{ techTotalPages }}
+                </span>
+                <Button variant="outline" size="sm" :disabled="!techHasNext" @click="techNext">
+                  <ChevronRight class="h-4 w-4" />
+                </Button>
+              </div>
+            </template>
           </div>
 
           <!-- IMAGES TAB -->
@@ -453,7 +483,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Form as VeeForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -477,6 +507,8 @@ import AdminHeader from '../components/AdminHeader.vue'
 import FloatingActions from '@components/layout/FloatingActions.vue'
 import ProjectDetailModal from '@features/projects/components/ProjectDetailModal.vue'
 import AdminImagesTab from '../components/AdminImagesTab.vue'
+import { proxyR2Url } from '@/utils/proxy'
+import { usePagination } from '@/composables/usePagination'
 import {
   FolderGit2,
   Code2,
@@ -491,6 +523,9 @@ import {
   Users,
   ImageIcon,
   LayoutDashboard,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -524,6 +559,37 @@ const projectNameMap = computed(() => {
 })
 
 const recentProjects = computed(() => projectList.value.slice(0, 5))
+
+// ---- Tech Search & Pagination ----
+const techSearch = ref('')
+
+const filteredTechs = computed(() => {
+  const list = techList.value
+  if (!techSearch.value) return list
+  const q = techSearch.value.toLowerCase()
+  return list.filter((t) => t.name.toLowerCase().includes(q) || t.slug.toLowerCase().includes(q))
+})
+
+const {
+  currentPage: techCurrentPage,
+  totalPages: techTotalPages,
+  hasNext: techHasNext,
+  hasPrev: techHasPrev,
+  next: techNext,
+  prev: techPrev,
+} = usePagination(
+  computed(() => filteredTechs.value.length),
+  10,
+)
+
+watch(techSearch, () => {
+  techCurrentPage.value = 1
+})
+
+const paginatedTechs = computed(() => {
+  const start = (techCurrentPage.value - 1) * 10
+  return filteredTechs.value.slice(start, start + 10)
+})
 
 const stats = computed(() => [
   { label: 'Total Projects', value: projectList.value.length, icon: FolderGit2 },
