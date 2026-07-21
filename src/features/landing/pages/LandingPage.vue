@@ -72,6 +72,11 @@ function onTechIconError(e: Event) {
   img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='${encodeURIComponent(color)}'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='white'%3E${initial}%3C/text%3E%3C/svg%3E`
 }
 
+function onProfileImgError(e: Event) {
+  const img = e.target as HTMLImageElement
+  img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='16' fill='%233b82f6'/%3E%3Ctext x='40' y='52' text-anchor='middle' font-family='Arial,sans-serif' font-size='32' font-weight='bold' fill='white'%3ESA%3C/text%3E%3C/svg%3E`
+}
+
 const ITEMS_PER_PAGE = 3
 const currentIndex = ref(0)
 const showAllProjects = ref(false)
@@ -262,6 +267,7 @@ function toggleView() {
               src="https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/AI%20Removal-Manual-AI%20Removal-Manual-Quality%20Restor.jpeg"
               :alt="$t('landing.profileName')"
               class="h-32 w-32 rounded-2xl border-2 border-white object-cover shadow-lg sm:h-40 sm:w-40 dark:border-gray-700"
+              @error="onProfileImgError"
             />
           </div>
 
