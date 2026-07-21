@@ -385,7 +385,7 @@
     <!-- Project Form Modal -->
     <Modal
       :open="projectFormOpen"
-      max-width="max-w-xl"
+      max-width="max-w-2xl"
       :title="editingProject ? 'Edit Project' : 'Tambah Project'"
       @close="closeProjectForm"
     >
@@ -395,7 +395,7 @@
         :initial-values="projectInitialValues"
         @submit="submitProject"
       >
-        <div class="space-y-4">
+        <div class="space-y-3">
           <FormField name="name" label="Nama Project" placeholder="Nama project" />
           <FormField
             name="description"
@@ -403,7 +403,7 @@
             type="textarea"
             placeholder="Deskripsi project"
           />
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FormField name="status" label="Status" type="select">
               <option value="complete">Complete</option>
               <option value="progress">Progress</option>
@@ -432,7 +432,7 @@
             type="url"
             placeholder="https://figma.com/..."
           />
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <FormField name="startDate" label="Start Date" type="date" />
             <FormField name="endDate" label="End Date" type="date" />
             <FormField name="priority" label="Prioritas (1-100)" type="number" placeholder="50" />
@@ -441,30 +441,45 @@
             <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Technologies</label
             >
-            <div
-              v-if="techList.length"
-              class="flex max-h-32 flex-wrap gap-2 overflow-y-auto rounded-lg border p-3 dark:border-gray-700"
-            >
-              <label
-                v-for="t in techList"
-                :key="t.id"
-                class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                :class="
-                  selectedTechIds.includes(t.id)
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                    : ''
-                "
-              >
-                <input
-                  type="checkbox"
-                  :value="t.id"
-                  :checked="selectedTechIds.includes(t.id)"
-                  class="sr-only"
-                  @change="toggleTechId(t.id)"
+            <div v-if="techList.length">
+              <div class="relative mb-2">
+                <Search
+                  class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
                 />
-                <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-4 w-4" />
-                {{ t.name }}
-              </label>
+                <input
+                  v-model="techSearchFilter"
+                  type="text"
+                  placeholder="Search tech..."
+                  class="w-full rounded-lg border bg-white py-1.5 pr-3 pl-8 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500"
+                />
+              </div>
+              <div
+                class="flex max-h-24 flex-wrap gap-1.5 overflow-y-auto rounded-lg border-2 border-gray-200 p-2 dark:border-gray-600"
+              >
+                <label
+                  v-for="t in filteredTechsForProject"
+                  :key="t.id"
+                  class="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-0.5 text-xs transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                  :class="
+                    selectedTechIds.includes(t.id)
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                      : ''
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    :value="t.id"
+                    :checked="selectedTechIds.includes(t.id)"
+                    class="sr-only"
+                    @change="toggleTechId(t.id)"
+                  />
+                  <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-3.5 w-3.5" />
+                  {{ t.name }}
+                </label>
+                <p v-if="!filteredTechsForProject.length" class="py-1 text-xs text-gray-400">
+                  No tech found.
+                </p>
+              </div>
             </div>
             <p v-else class="text-sm text-gray-500">Loading techs...</p>
           </div>
@@ -498,7 +513,7 @@
         :initial-values="editingTech ?? undefined"
         @submit="submitTech"
       >
-        <div class="space-y-4">
+        <div class="space-y-3">
           <FormField name="name" label="Name" placeholder="React" />
           <FormField name="slug" label="Slug" placeholder="react" />
           <FormField
@@ -513,7 +528,7 @@
           >
             {{ techError }}
           </p>
-          <div class="flex justify-end gap-3 pt-4">
+          <div class="flex justify-end gap-3 pt-2">
             <Button variant="outline" @click="closeTechForm"> Batal </Button>
             <Button type="submit" :disabled="techSubmitting">
               {{ techSubmitting ? 'Menyimpan...' : editingTech ? 'Update' : 'Simpan' }}
@@ -738,6 +753,15 @@ const editingProject = ref<Project | null>(null)
 const selectedTechIds = ref<string[]>([])
 const projectError = ref('')
 const projectSubmitting = ref(false)
+const techSearchFilter = ref('')
+
+const filteredTechsForProject = computed(() => {
+  if (!techSearchFilter.value) return techList.value
+  const q = techSearchFilter.value.toLowerCase()
+  return techList.value.filter(
+    (t) => t.name.toLowerCase().includes(q) || t.slug.toLowerCase().includes(q),
+  )
+})
 
 const projectInitialValues = computed(() => ({
   name: editingProject.value?.name ?? '',
@@ -771,6 +795,7 @@ function openProjectForm(project: Project | null) {
   editingProject.value = project
   selectedTechIds.value = project?.techs.map((t) => t.id) ?? []
   projectError.value = ''
+  techSearchFilter.value = ''
   projectFormOpen.value = true
 }
 
@@ -779,6 +804,7 @@ function closeProjectForm() {
   editingProject.value = null
   selectedTechIds.value = []
   projectError.value = ''
+  techSearchFilter.value = ''
 }
 
 function toggleTechId(id: string) {

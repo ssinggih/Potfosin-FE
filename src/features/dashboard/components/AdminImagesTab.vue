@@ -139,7 +139,7 @@
       </p>
     </div>
 
-    <!-- Image Gallery -->
+    <!-- Image Gallery Header -->
     <div class="mb-6 flex items-center justify-between">
       <div>
         <h2 class="text-xl font-bold">All Images</h2>
@@ -150,63 +150,85 @@
       </div>
     </div>
 
-    <div v-if="isLoading" class="flex items-center justify-center py-12 text-sm text-gray-500">
-      <Loader2 class="mr-2 h-5 w-5 animate-spin" />
-      Loading images...
+    <!-- Skeleton Loading -->
+    <div v-if="isLoading" class="grid grid-cols-2 gap-4 sm:grid-cols-2">
+      <div
+        v-for="i in 6"
+        :key="i"
+        class="animate-pulse overflow-hidden rounded-xl border bg-white dark:border-gray-700 dark:bg-gray-950"
+      >
+        <div class="h-48 bg-gray-200 dark:bg-gray-700" />
+        <div class="space-y-2 p-3">
+          <div class="h-3 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
+          <div class="h-2.5 w-1/3 rounded bg-gray-200 dark:bg-gray-700" />
+        </div>
+      </div>
     </div>
 
-    <template v-else-if="groupedImages.length">
-      <div v-for="group in groupedImages" :key="group.projectId" class="mb-8">
-        <div class="mb-3 flex items-center gap-2">
-          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            {{ group.projectName }}
-          </h3>
-          <span
-            class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-          >
-            {{ group.images.length }}
-          </span>
-        </div>
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          <div
-            v-for="img in group.images"
-            :key="img.id"
-            class="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-950"
-          >
-            <img
-              :src="proxyR2Url(img.url)"
-              :alt="img.type"
-              class="h-40 w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
-              @click="previewImage = proxyR2Url(img.url)"
-              @error="onImgError"
-            />
-            <div class="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/30">
-              <div class="flex items-start justify-between p-2">
-                <span
-                  class="rounded-md bg-black/60 px-2 py-0.5 text-xs text-white capitalize backdrop-blur-sm"
-                >
-                  {{ img.type }}
-                </span>
-                <button
-                  type="button"
-                  class="rounded-lg bg-red-600/80 p-1.5 text-white opacity-0 shadow-sm backdrop-blur-sm transition-all group-hover:opacity-100 hover:bg-red-600"
-                  :disabled="deletingId === img.id"
-                  @click="deleteImage(img.id)"
-                >
-                  <Trash2 class="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <div
-                class="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/40 to-transparent p-2 pt-6"
+    <!-- Image Grid -->
+    <template v-else-if="paginatedImages.length">
+      <div class="grid grid-cols-2 gap-4">
+        <div
+          v-for="img in paginatedImages"
+          :key="img.id"
+          class="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-950"
+        >
+          <img
+            :src="proxyR2Url(img.url)"
+            :alt="img.type"
+            class="h-48 w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
+            @click="previewImage = proxyR2Url(img.url)"
+            @error="onImgError"
+          />
+          <div class="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/30">
+            <div class="flex items-start justify-between p-2">
+              <span
+                class="rounded-md bg-black/60 px-2 py-0.5 text-xs text-white capitalize backdrop-blur-sm"
               >
-                <span class="text-xs text-white/80">{{ group.projectName }}</span>
-              </div>
+                {{ img.type }}
+              </span>
+              <button
+                type="button"
+                class="rounded-lg bg-red-600/80 p-1.5 text-white opacity-0 shadow-sm backdrop-blur-sm transition-all group-hover:opacity-100 hover:bg-red-600"
+                :disabled="deletingId === img.id"
+                @click="deleteImage(img.id)"
+              >
+                <Loader2 v-if="deletingId === img.id" class="h-3.5 w-3.5 animate-spin" />
+                <Trash2 v-else class="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div
+              class="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/50 to-transparent p-3 pt-8"
+            >
+              <span class="text-xs text-white/90">{{ img.projectName }}</span>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-center gap-2">
+        <button
+          class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700"
+          :disabled="currentPage === 1"
+          @click="currentPage--"
+        >
+          <ChevronLeft class="h-4 w-4" />
+        </button>
+        <span class="px-3 text-sm text-gray-600 dark:text-gray-400">
+          {{ currentPage }} / {{ totalPages }}
+        </span>
+        <button
+          class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700"
+          :disabled="currentPage === totalPages"
+          @click="currentPage++"
+        >
+          <ChevronRight class="h-4 w-4" />
+        </button>
+      </div>
     </template>
 
+    <!-- Empty State -->
     <div v-else class="flex flex-col items-center justify-center py-20 text-gray-400">
       <ImageIcon class="mb-4 h-16 w-16" />
       <p class="text-sm">Belum ada gambar</p>
@@ -248,7 +270,18 @@ import {
 } from '@features/uploads'
 import { Button } from '@components/ui'
 import { proxyR2Url } from '@/utils/proxy'
-import { ImageIcon, Loader2, Trash2, X, Upload, Search, ChevronDown, Check } from 'lucide-vue-next'
+import {
+  ImageIcon,
+  Loader2,
+  Trash2,
+  X,
+  Upload,
+  Search,
+  ChevronDown,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-vue-next'
 
 interface Props {
   projectIds: string[]
@@ -256,6 +289,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const ITEMS_PER_PAGE = 6
 
 const projectIdsRef = computed(() => props.projectIds)
 const { data: groupedData, isLoading } = useAllProjectImages(projectIdsRef)
@@ -271,6 +306,7 @@ const uploadType = ref<'mockup' | 'post'>('mockup')
 const fileInput = ref<HTMLInputElement | null>(null)
 const projectSearch = ref('')
 const showProjectDropdown = ref(false)
+const currentPage = ref(1)
 
 const filteredProjectIds = computed(() => {
   const q = projectSearch.value.toLowerCase()
@@ -289,6 +325,28 @@ const uploadSuccess = ref(false)
 
 const uploading = computed(() => uploadingMockup.value || uploadingPost.value)
 
+interface FlatImage {
+  id: string
+  url: string
+  type: string
+  projectId: string
+  projectName: string
+}
+
+const allImages = computed<FlatImage[]>(() => {
+  return groupedData.value
+    .filter((g) => g.images.length > 0)
+    .flatMap((g) =>
+      g.images.map((img) => ({
+        id: img.id,
+        url: img.url,
+        type: img.type,
+        projectId: g.projectId,
+        projectName: props.projectNames[g.projectId] ?? 'Unknown',
+      })),
+    )
+})
+
 const groupedImages = computed(() => {
   return groupedData.value
     .filter((g) => g.images.length > 0)
@@ -299,9 +357,16 @@ const groupedImages = computed(() => {
     }))
 })
 
-const totalImages = computed(() => groupedImages.value.reduce((sum, g) => sum + g.images.length, 0))
+const totalImages = computed(() => allImages.value.length)
 
 const projectsWithImages = computed(() => groupedImages.value.length)
+
+const totalPages = computed(() => Math.ceil(allImages.value.length / ITEMS_PER_PAGE))
+
+const paginatedImages = computed(() => {
+  const start = (currentPage.value - 1) * ITEMS_PER_PAGE
+  return allImages.value.slice(start, start + ITEMS_PER_PAGE)
+})
 
 function onImgError(e: Event) {
   const img = e.target as HTMLImageElement
@@ -350,6 +415,7 @@ async function startUpload() {
     selectedFile.value = null
     selectedFilePreview.value = ''
     uploadSuccess.value = true
+    currentPage.value = 1
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } }; message?: string }
     alert(
@@ -365,7 +431,10 @@ async function deleteImage(imageId: string) {
   deletingId.value = imageId
   try {
     await deleteImageMutate(imageId)
-    alert('Gambar berhasil dihapus!')
+    const newTotal = Math.ceil((allImages.value.length - 1) / ITEMS_PER_PAGE)
+    if (currentPage.value > newTotal && newTotal > 0) {
+      currentPage.value = newTotal
+    }
   } catch {
     alert('Gagal hapus gambar')
   } finally {
@@ -383,5 +452,14 @@ async function deleteImage(imageId: string) {
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.25s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>
