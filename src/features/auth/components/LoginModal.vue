@@ -89,17 +89,18 @@ function handleClose() {
   emit('close')
 }
 
-async function onSubmit(values: any) {
+async function onSubmit(values: Record<string, unknown>) {
   error.value = ''
   submitting.value = true
   try {
-    await authStore.login(values.email, values.password)
+    await authStore.login(values.email as string, values.password as string)
     emit('success')
-  } catch (e: any) {
-    if (e?.response?.data?.message) {
-      error.value = e.response.data.message
-    } else if (e?.message) {
-      error.value = e.message
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    if (err?.response?.data?.message) {
+      error.value = err.response.data.message
+    } else if (err?.message) {
+      error.value = err.message
     } else {
       error.value = 'Terjadi kesalahan. Periksa koneksi Anda.'
     }

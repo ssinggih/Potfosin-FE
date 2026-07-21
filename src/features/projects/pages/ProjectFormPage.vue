@@ -34,11 +34,14 @@ const { mutateAsync: updateProject, isPending: isUpdating } = useUpdateProject()
 
 const isSubmitting = computed(() => isCreating.value || isUpdating.value)
 
-async function handleSubmit(values: Parameters<typeof createProject>[0]) {
+async function handleSubmit(values: Record<string, unknown>) {
   if (isEdit) {
-    await updateProject({ id: projectId, data: values })
+    await updateProject({
+      id: projectId,
+      data: values as Parameters<typeof updateProject>[0]['data'],
+    })
   } else {
-    await createProject(values)
+    await createProject(values as Parameters<typeof createProject>[0])
   }
   router.push('/projects')
 }

@@ -35,7 +35,7 @@
           </div>
 
           <!-- OVERVIEW TAB -->
-          <div v-if="activeTab === 'overview'">
+          <div v-if="activeTab === 'overview'" class="space-y-6 pt-6">
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <Card v-for="stat in stats" :key="stat.label">
                 <template #header>
@@ -49,55 +49,103 @@
                 </p>
               </Card>
             </div>
-            <div class="mt-8 grid gap-6 lg:grid-cols-2">
+            <div class="grid gap-6 lg:grid-cols-2">
               <Card>
                 <template #header>
-                  <h2 class="font-semibold">
-                    {{ $t('dashboard.recentProjects') }}
-                  </h2>
+                  <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">
+                      {{ $t('dashboard.recentProjects') }}
+                    </h2>
+                    <div v-if="overviewProjectTotalPages > 1" class="flex items-center gap-1.5">
+                      <button
+                        :disabled="!overviewProjectHasPrev"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewProjectPrev"
+                      >
+                        <ChevronLeft class="h-3.5 w-3.5" />
+                      </button>
+                      <span
+                        class="min-w-[3rem] text-center text-xs text-gray-500 dark:text-gray-400"
+                      >
+                        {{ overviewProjectCurrentPage }} / {{ overviewProjectTotalPages }}
+                      </span>
+                      <button
+                        :disabled="!overviewProjectHasNext"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewProjectNext"
+                      >
+                        <ChevronRight class="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </template>
                 <div v-if="projectsLoading" class="py-4 text-sm text-gray-500">
                   {{ $t('common.loading') }}
                 </div>
-                <div v-else class="space-y-3">
+                <div v-else-if="!recentProjects.length" class="py-4 text-sm text-gray-500">
+                  {{ $t('common.no_data') }}
+                </div>
+                <div v-else class="grid h-[132px] grid-cols-3 content-start gap-3">
                   <div
-                    v-for="p in recentProjects"
+                    v-for="p in paginatedOverviewProjects"
                     :key="p.id"
-                    class="flex items-center justify-between rounded-lg border px-4 py-3 dark:border-gray-800"
+                    class="rounded-lg border px-3 py-2 dark:border-gray-800"
                   >
-                    <span class="text-sm font-medium">{{ p.name }}</span>
+                    <p class="truncate text-sm font-medium">
+                      {{ p.name }}
+                    </p>
                     <span
-                      class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                      class="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
                     >
                       {{ p.status }}
                     </span>
                   </div>
-                  <p v-if="!recentProjects.length" class="py-4 text-sm text-gray-500">
-                    {{ $t('common.no_data') }}
-                  </p>
                 </div>
               </Card>
               <Card>
                 <template #header>
-                  <h2 class="font-semibold">
-                    {{ $t('dashboard.techStack') }}
-                  </h2>
+                  <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">
+                      {{ $t('dashboard.techStack') }}
+                    </h2>
+                    <div v-if="overviewTechTotalPages > 1" class="flex items-center gap-1.5">
+                      <button
+                        :disabled="!overviewTechHasPrev"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewTechPrev"
+                      >
+                        <ChevronLeft class="h-3.5 w-3.5" />
+                      </button>
+                      <span
+                        class="min-w-[3rem] text-center text-xs text-gray-500 dark:text-gray-400"
+                      >
+                        {{ overviewTechCurrentPage }} / {{ overviewTechTotalPages }}
+                      </span>
+                      <button
+                        :disabled="!overviewTechHasNext"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewTechNext"
+                      >
+                        <ChevronRight class="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </template>
                 <div v-if="techsLoading" class="py-4 text-sm text-gray-500">
                   {{ $t('common.loading') }}
                 </div>
-                <div v-else class="flex flex-wrap gap-2">
+                <div v-else-if="!techList.length" class="py-4 text-sm text-gray-500">
+                  {{ $t('common.no_data') }}
+                </div>
+                <div v-else class="flex min-h-[132px] flex-wrap content-start gap-2">
                   <span
-                    v-for="t in techList"
+                    v-for="t in paginatedOverviewTechs"
                     :key="t.id"
                     class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm dark:border-gray-700"
                   >
                     <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-4 w-4" />
                     {{ t.name }}
                   </span>
-                  <p v-if="!techList.length" class="py-4 text-sm text-gray-500">
-                    {{ $t('common.no_data') }}
-                  </p>
                 </div>
               </Card>
             </div>
@@ -560,6 +608,42 @@ const projectNameMap = computed(() => {
 
 const recentProjects = computed(() => projectList.value.slice(0, 5))
 
+// ---- Overview Projects Pagination ----
+const {
+  currentPage: overviewProjectCurrentPage,
+  totalPages: overviewProjectTotalPages,
+  hasNext: overviewProjectHasNext,
+  hasPrev: overviewProjectHasPrev,
+  next: overviewProjectNext,
+  prev: overviewProjectPrev,
+} = usePagination(
+  computed(() => projectList.value.length),
+  6,
+)
+
+const paginatedOverviewProjects = computed(() => {
+  const start = (overviewProjectCurrentPage.value - 1) * 6
+  return projectList.value.slice(start, start + 6)
+})
+
+// ---- Overview Techs Pagination ----
+const {
+  currentPage: overviewTechCurrentPage,
+  totalPages: overviewTechTotalPages,
+  hasNext: overviewTechHasNext,
+  hasPrev: overviewTechHasPrev,
+  next: overviewTechNext,
+  prev: overviewTechPrev,
+} = usePagination(
+  computed(() => techList.value.length),
+  6,
+)
+
+const paginatedOverviewTechs = computed(() => {
+  const start = (overviewTechCurrentPage.value - 1) * 6
+  return techList.value.slice(start, start + 6)
+})
+
 // ---- Tech Search & Pagination ----
 const techSearch = ref('')
 
@@ -706,23 +790,23 @@ function toggleTechId(id: string) {
   }
 }
 
-async function submitProject(values: any) {
+async function submitProject(values: Record<string, unknown>) {
   projectError.value = ''
   projectSubmitting.value = true
   try {
     const payload = {
-      name: values.name,
-      description: values.description,
-      status: values.status,
-      teamType: values.teamType,
-      experience: values.experience,
+      name: values.name as string,
+      description: values.description as string,
+      status: values.status as 'complete' | 'progress' | 'paused',
+      teamType: values.teamType as 'solo' | 'team',
+      experience: values.experience as string,
       techIds: selectedTechIds.value,
       ownerId: authStore.user?.id || '',
-      githubLink: values.githubLink || undefined,
-      designLink: values.designLink || undefined,
-      startDate: values.startDate || null,
-      endDate: values.endDate || null,
-      priority: values.priority ?? 50,
+      githubLink: (values.githubLink as string) || undefined,
+      designLink: (values.designLink as string) || undefined,
+      startDate: (values.startDate as string) || null,
+      endDate: (values.endDate as string) || null,
+      priority: (values.priority as number) ?? 50,
     }
     if (editingProject.value) {
       await updateProjectMutate({ id: editingProject.value.id, data: payload })
@@ -730,8 +814,9 @@ async function submitProject(values: any) {
       await createProject(payload)
     }
     closeProjectForm()
-  } catch (e: any) {
-    projectError.value = e?.response?.data?.message || e?.message || 'Gagal menyimpan project'
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    projectError.value = err?.response?.data?.message || err?.message || 'Gagal menyimpan project'
   } finally {
     projectSubmitting.value = false
   }
@@ -742,8 +827,9 @@ async function confirmDeleteProject(id: string) {
   try {
     await deleteProjectMutate(id)
     alert('Project berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus project')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus project')
   }
 }
 
@@ -782,20 +868,26 @@ function closeTechForm() {
   techError.value = ''
 }
 
-async function submitTech(values: any) {
+async function submitTech(values: Record<string, unknown>) {
   techError.value = ''
   techSubmitting.value = true
   try {
+    const payload = {
+      name: values.name as string,
+      slug: values.slug as string,
+      icon_url: (values.icon_url as string) || '',
+    }
     if (editingTech.value) {
-      await updateTechMutate({ id: editingTech.value.id, data: values })
+      await updateTechMutate({ id: editingTech.value.id, data: payload })
       alert('Tech berhasil diupdate!')
     } else {
-      await createTechMutate(values)
+      await createTechMutate(payload)
       alert('Tech berhasil ditambahkan!')
     }
     closeTechForm()
-  } catch (e: any) {
-    techError.value = e?.response?.data?.message || e?.message || 'Gagal menyimpan tech'
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    techError.value = err?.response?.data?.message || err?.message || 'Gagal menyimpan tech'
   } finally {
     techSubmitting.value = false
   }
@@ -806,8 +898,9 @@ async function confirmDeleteTech(id: string) {
   try {
     await deleteTechMutate(id)
     alert('Tech berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus tech')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus tech')
   }
 }
 </script>

@@ -35,7 +35,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  submit: [{ name: string; slug: string; icon_url: string }]
+  submit: [values: Record<string, unknown>]
   cancel: []
 }>()
 
@@ -53,7 +53,7 @@ const initialValues = {
   icon_url: props.tech?.icon_url ?? '',
 }
 
-function onSubmit(values: any) {
+function onSubmit(values: Record<string, unknown>) {
   emit('submit', values)
 }
 </script>

@@ -119,7 +119,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  submit: [values: any]
+  submit: [values: Record<string, unknown>]
   cancel: []
 }>()
 
@@ -156,7 +156,7 @@ function toggleTech(id: string) {
   }
 }
 
-function onSubmit(values: any) {
+function onSubmit(values: Record<string, unknown>) {
   emit('submit', { ...values, techIds: selectedTechIds.value })
 }
 </script>

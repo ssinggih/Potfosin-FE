@@ -350,10 +350,11 @@ async function startUpload() {
     selectedFile.value = null
     selectedFilePreview.value = ''
     uploadSuccess.value = true
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
     alert(
-      e?.response?.data?.message ||
-        e?.message ||
+      err?.response?.data?.message ||
+        err?.message ||
         (uploadType.value === 'mockup' ? 'Gagal upload mockup' : 'Gagal upload post'),
     )
   }

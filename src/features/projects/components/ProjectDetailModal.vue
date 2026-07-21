@@ -195,8 +195,9 @@ async function onUploadMockup(e: Event) {
   if (!file) return
   try {
     await uploadMockup({ projectId: props.projectId, file })
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal upload mockup')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal upload mockup')
   }
   input.value = ''
 }
@@ -207,8 +208,9 @@ async function onUploadPost(e: Event) {
   if (!file) return
   try {
     await uploadPost({ projectId: props.projectId, file })
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal upload post')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal upload post')
   }
   input.value = ''
 }
@@ -219,8 +221,9 @@ async function deleteImage(imageId: string) {
   try {
     await deleteImageMutate(imageId)
     alert('Gambar berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus gambar')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus gambar')
   } finally {
     deleting.value = ''
   }

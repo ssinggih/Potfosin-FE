@@ -141,11 +141,14 @@ function closeModal() {
   selectedTech.value = null
 }
 
-function handleSubmit(data: { name: string; slug: string; icon_url: string }) {
+function handleSubmit(data: Record<string, unknown>) {
   if (selectedTech.value) {
-    updateTech({ id: selectedTech.value.id, data })
+    updateTech({
+      id: selectedTech.value.id,
+      data: data as { name: string; slug: string; icon_url: string },
+    })
   } else {
-    createTech(data)
+    createTech(data as { name: string; slug: string; icon_url: string })
   }
   closeModal()
 }
