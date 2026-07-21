@@ -5,7 +5,7 @@
   >
     <div v-if="mockupImage" class="relative h-44 overflow-hidden">
       <img
-        :src="mockupImage.url"
+        :src="proxyR2Url(mockupImage.url)"
         :alt="project.name"
         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         @error="onImgError"
@@ -61,7 +61,7 @@
         >
           <img
             v-if="tech.icon_url"
-            :src="tech.icon_url"
+            :src="proxyR2Url(tech.icon_url)"
             :alt="tech.name"
             class="h-3.5 w-3.5 object-contain"
             @error="onImgError"
@@ -90,6 +90,7 @@ import { useRouter } from 'vue-router'
 import type { Project } from '@/api/projects.api'
 import { Card } from '@components/cards'
 import { formatDate } from '@/utils/format'
+import { proxyR2Url } from '@/utils/proxy'
 
 interface Props {
   project: Project

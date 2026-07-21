@@ -174,10 +174,10 @@
             class="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-950"
           >
             <img
-              :src="img.url"
+              :src="proxyR2Url(img.url)"
               :alt="img.type"
               class="h-40 w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
-              @click="previewImage = img.url"
+              @click="previewImage = proxyR2Url(img.url)"
               @error="onImgError"
             />
             <div class="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/30">
@@ -247,6 +247,7 @@ import {
   useUploadPost,
 } from '@features/uploads'
 import { Button } from '@components/ui'
+import { proxyR2Url } from '@/utils/proxy'
 import { ImageIcon, Loader2, Trash2, X, Upload, Search, ChevronDown, Check } from 'lucide-vue-next'
 
 interface Props {

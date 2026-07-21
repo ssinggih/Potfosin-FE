@@ -19,7 +19,7 @@
         >
           <div v-if="mockupImage" class="relative h-56 overflow-hidden sm:h-72">
             <img
-              :src="mockupImage.url"
+              :src="proxyR2Url(mockupImage.url)"
               :alt="project.name"
               class="h-full w-full object-cover"
               @error="onGalleryImgError"
@@ -113,7 +113,7 @@
               >
                 <img
                   v-if="tech.icon_url"
-                  :src="tech.icon_url"
+                  :src="proxyR2Url(tech.icon_url)"
                   :alt="tech.name"
                   class="h-3.5 w-3.5 object-contain"
                   @error="onTechIconError"
@@ -182,10 +182,10 @@
               v-for="img in images"
               :key="img.id"
               class="group relative cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800"
-              @click="lightboxUrl = img.url"
+              @click="lightboxUrl = proxyR2Url(img.url)"
             >
               <img
-                :src="img.url"
+                :src="proxyR2Url(img.url)"
                 :alt="img.type"
                 class="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 @error="onGalleryImgError"
@@ -244,6 +244,7 @@ import { useProjectImages } from '@features/uploads'
 import { Button } from '@components/ui'
 import SkeletonDetail from '@components/ui/SkeletonDetail.vue'
 import { formatDate } from '@/utils/format'
+import { proxyR2Url } from '@/utils/proxy'
 import { ChevronLeft, Users, Calendar, Github, Figma, Loader2, ImageIcon, X } from 'lucide-vue-next'
 
 const route = useRoute()
