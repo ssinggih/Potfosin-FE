@@ -14,8 +14,8 @@ export const SECTION_IDS = {
 } as const
 
 export const NAV_ITEMS = [
-  { label: 'home', labelEn: 'Home', section: SECTION_IDS.HERO },
-  { label: 'projects', labelEn: 'Projects', section: SECTION_IDS.PROJECTS },
-  { label: 'techs', labelEn: 'Techs', section: SECTION_IDS.TECHS },
-  { label: 'contact', labelEn: 'Contact', section: SECTION_IDS.CONTACT },
+  { key: 'home', section: SECTION_IDS.HERO },
+  { key: 'projects', section: SECTION_IDS.PROJECTS },
+  { key: 'techs', section: SECTION_IDS.TECHS },
+  { key: 'contact', section: SECTION_IDS.CONTACT },
 ] as const

@@ -17,7 +17,7 @@
           class="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
           @click="scrollToSection(item.section)"
         >
-          {{ localeStore.locale === 'id' ? item.label : item.labelEn }}
+          {{ $t(`nav.${item.key}`) }}
         </button>
       </nav>
 
@@ -65,7 +65,7 @@
               }
             "
           >
-            {{ localeStore.locale === 'id' ? item.label : item.labelEn }}
+            {{ $t(`nav.${item.key}`) }}
           </button>
         </nav>
       </div>
@@ -77,7 +77,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@features/auth'
-import { useLocaleStore } from '@/stores/localeStore'
 import { NAV_ITEMS } from '@/constants'
 import { Menu, X } from 'lucide-vue-next'
 
@@ -86,7 +85,6 @@ const emit = defineEmits<{
 }>()
 const router = useRouter()
 const authStore = useAuthStore()
-const localeStore = useLocaleStore()
 const isMobileOpen = ref(false)
 
 function scrollToSection(section: string) {

@@ -28,8 +28,13 @@
     "projectsDesc": "Projects I've built",
     "techs": "Technologies",
     "techsDesc": "Technologies I work with",
-    "contact": "Contact",
-    "contactDesc": "Get in touch for collaboration"
+    "contact": "Let's Connect",
+    "contactDesc": "Get in touch for collaboration",
+    "profileName": "Muhamad Singgih",
+    "profileRole": "Full-Stack Web & Mobile Developer",
+    "profileBio": "Passionate about technology and software development from an early age, I enjoy exploring new technologies and continuously expanding my knowledge. I have experience developing web, mobile, and desktop applications, with a strong focus on building modern, scalable, and user-friendly solutions. I thrive in collaborative environments, communicate effectively, and enjoy working with cross-functional teams to deliver high-quality software and solve real-world problems.",
+    "profileLocation": "Indonesia",
+    "viewCV": "Download CV"
   },
   "dashboard": {
     "title": "Admin Dashboard",

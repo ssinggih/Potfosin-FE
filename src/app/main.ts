@@ -14,6 +14,7 @@ import '@styles/main.css'
 const savedLocale = localStorage.getItem(STORAGE_KEYS.LOCALE) || 'id'
 
 const i18n = createI18n({
+  legacy: false,
   locale: savedLocale,
   fallbackLocale: 'en',
   messages: { id, en },
@@ -28,11 +29,15 @@ app.use(VueQueryPlugin)
 app.use(i18n)
 
 const localeStore = useLocaleStore()
+
+localeStore.setLocale(savedLocale)
+
 watch(
   () => localeStore.locale,
   (val) => {
-    i18n.global.locale = val as 'id' | 'en'
+    i18n.global.locale.value = val as 'id' | 'en'
   },
+  { immediate: true },
 )
 
 app.mount('#app')

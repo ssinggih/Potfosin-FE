@@ -28,8 +28,13 @@
     "projectsDesc": "Proyek yang pernah saya kerjakan",
     "techs": "Teknologi",
     "techsDesc": "Teknologi yang saya kuasai",
-    "contact": "Kontak",
-    "contactDesc": "Hubungi saya untuk kolaborasi"
+    "contact": "Hubungi Saya",
+    "contactDesc": "Hubungi saya untuk kolaborasi",
+    "profileName": "Muhamad Singgih",
+    "profileRole": "Full-Stack Web & Mobile Developer",
+    "profileBio": "Saya memiliki ketertarikan yang besar terhadap teknologi dan pengembangan perangkat lunak sejak usia dini. Saya senang mempelajari teknologi baru dan terus mengembangkan kemampuan saya. Saya memiliki pengalaman dalam mengembangkan aplikasi web, mobile, dan desktop dengan fokus pada pembangunan solusi yang modern, skalabel, dan mudah digunakan. Saya menikmati bekerja dalam lingkungan kolaboratif, memiliki kemampuan komunikasi yang baik, serta senang bekerja sama dengan tim lintas fungsi untuk menghasilkan perangkat lunak berkualitas tinggi yang mampu menyelesaikan permasalahan nyata.",
+    "profileLocation": "Indonesia",
+    "viewCV": "Unduh CV"
   },
   "dashboard": {
     "title": "Dashboard Admin",

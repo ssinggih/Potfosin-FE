@@ -11,7 +11,15 @@ import ProjectCard from '@features/projects/components/ProjectCard.vue'
 import LoginModal from '@features/auth/components/LoginModal.vue'
 import SkeletonCard from '@components/ui/SkeletonCard.vue'
 import SkeletonTech from '@components/ui/SkeletonTech.vue'
-import { Mail, ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-vue-next'
+import {
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid,
+  List,
+  MapPin,
+  Download,
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const showLogin = ref(false)
@@ -238,29 +246,63 @@ function toggleView() {
       :id="SECTION_IDS.CONTACT"
       class="flex min-h-screen w-full items-center bg-white px-4 py-20 sm:px-6 lg:px-8 dark:bg-gray-950"
     >
-      <div class="mx-auto max-w-xl text-center">
-        <h2 class="mb-2 text-3xl font-bold">
+      <div class="mx-auto w-full max-w-4xl">
+        <h2 class="mb-2 text-center text-3xl font-bold">
           {{ $t('landing.contact') }}
         </h2>
-        <p class="mb-6 text-gray-500 dark:text-gray-400">
+        <p class="mb-12 text-center text-gray-500 dark:text-gray-400">
           {{ $t('landing.contactDesc') }}
         </p>
+
         <div
-          class="mx-auto mb-8 max-w-lg rounded-xl border bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900"
+          class="flex flex-col items-center gap-8 rounded-2xl border bg-gray-50 p-8 shadow-sm sm:flex-row sm:items-start sm:p-10 dark:border-gray-800 dark:bg-gray-900"
         >
-          <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-            Saya adalah seorang pengembang perangkat lunak yang berfokus pada pembuatan aplikasi web
-            modern, responsif, dan ramah pengguna. Dengan pengalaman dalam berbagai teknologi, saya
-            selalu berusaha memberikan solusi terbaik untuk setiap proyek yang saya kerjakan.
-          </p>
+          <div class="shrink-0">
+            <img
+              src="https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/AI%20Removal-Manual-AI%20Removal-Manual-Quality%20Restor.jpeg"
+              :alt="$t('landing.profileName')"
+              class="h-32 w-32 rounded-2xl border-2 border-white object-cover shadow-lg sm:h-40 sm:w-40 dark:border-gray-700"
+            />
+          </div>
+
+          <div class="flex-1 text-center sm:text-left">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {{ $t('landing.profileName') }}
+            </h3>
+            <p class="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">
+              {{ $t('landing.profileRole') }}
+            </p>
+
+            <div
+              class="mt-2 inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
+            >
+              <MapPin class="h-3.5 w-3.5" />
+              {{ $t('landing.profileLocation') }}
+            </div>
+
+            <p class="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+              {{ $t('landing.profileBio') }}
+            </p>
+
+            <div class="mt-6 flex flex-wrap justify-center gap-3 sm:justify-start">
+              <a
+                href="mailto:sing.work@gmail.com"
+                class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
+              >
+                <Mail class="h-4 w-4" />
+                sing.work@gmail.com
+              </a>
+              <a
+                href="https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/CV_ATS_MUHAMAD%20SINGGIH.pdf"
+                target="_blank"
+                class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                <Download class="h-4 w-4" />
+                {{ $t('landing.viewCV') }}
+              </a>
+            </div>
+          </div>
         </div>
-        <a
-          href="mailto:hello@portfosin.com"
-          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
-        >
-          <Mail class="h-4 w-4" />
-          hello@portfosin.com
-        </a>
       </div>
     </section>
 
