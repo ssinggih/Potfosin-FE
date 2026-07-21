@@ -20,6 +20,7 @@ import {
   MapPin,
   Download,
 } from 'lucide-vue-next'
+import { proxyR2Url } from '@/utils/proxy'
 
 const router = useRouter()
 const showLogin = ref(false)
@@ -229,7 +230,7 @@ function toggleView() {
           >
             <img
               v-if="tech.icon_url"
-              :src="tech.icon_url"
+              :src="proxyR2Url(tech.icon_url)"
               :alt="tech.name"
               class="h-8 w-8 object-contain"
               @error="onTechIconError"
@@ -264,7 +265,11 @@ function toggleView() {
         >
           <div class="shrink-0">
             <img
-              src="https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/AI%20Removal-Manual-AI%20Removal-Manual-Quality%20Restor.jpeg"
+              :src="
+                proxyR2Url(
+                  'https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/AI%20Removal-Manual-AI%20Removal-Manual-Quality%20Restor.jpeg',
+                )
+              "
               :alt="$t('landing.profileName')"
               class="h-32 w-32 rounded-2xl border-2 border-white object-cover shadow-lg sm:h-40 sm:w-40 dark:border-gray-700"
               @error="onProfileImgError"
@@ -299,7 +304,11 @@ function toggleView() {
                 sing.work@gmail.com
               </a>
               <a
-                href="https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/CV_ATS_MUHAMAD%20SINGGIH.pdf"
+                :href="
+                  proxyR2Url(
+                    'https://pub-3a7d8dbbcc014b04a39701b84884e71c.r2.dev/CV_ATS_MUHAMAD%20SINGGIH.pdf',
+                  )
+                "
                 target="_blank"
                 class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >

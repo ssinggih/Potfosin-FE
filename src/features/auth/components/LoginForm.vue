@@ -48,9 +48,9 @@ const loginSchema = toTypedSchema(
   }),
 )
 
-async function onSubmit(values: any) {
+async function onSubmit(values: Record<string, unknown>) {
   isPending.value = true
-  await handleLogin(values.email, values.password)
+  await handleLogin(values.email as string, values.password as string)
   isPending.value = false
   emit('success')
 }

@@ -69,7 +69,7 @@
         :key="t.id"
         class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs dark:border-gray-700"
       >
-        <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-3.5 w-3.5" />
+        <img v-if="t.icon_url" :src="proxyR2Url(t.icon_url)" :alt="t.name" class="h-3.5 w-3.5" />
         {{ t.name }}
       </span>
     </div>
@@ -122,7 +122,7 @@
           class="group relative overflow-hidden rounded-xl border dark:border-gray-700"
         >
           <img
-            :src="img.url"
+            :src="proxyR2Url(img.url)"
             :alt="img.type"
             class="h-48 w-full object-cover transition-transform group-hover:scale-105"
           />
@@ -160,6 +160,7 @@ import { useProject } from '../services/projectService'
 import { useProjectImages, useUploadMockup, useUploadPost, useDeleteImage } from '@features/uploads'
 import { Button } from '@components/ui'
 import { formatDate } from '@/utils/format'
+import { proxyR2Url } from '@/utils/proxy'
 import { Users, Briefcase, Github, Figma, Calendar, Upload, Trash2, Loader2 } from 'lucide-vue-next'
 
 interface Props {
@@ -194,8 +195,9 @@ async function onUploadMockup(e: Event) {
   if (!file) return
   try {
     await uploadMockup({ projectId: props.projectId, file })
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal upload mockup')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal upload mockup')
   }
   input.value = ''
 }
@@ -206,8 +208,9 @@ async function onUploadPost(e: Event) {
   if (!file) return
   try {
     await uploadPost({ projectId: props.projectId, file })
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal upload post')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal upload post')
   }
   input.value = ''
 }
@@ -218,8 +221,9 @@ async function deleteImage(imageId: string) {
   try {
     await deleteImageMutate(imageId)
     alert('Gambar berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus gambar')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus gambar')
   } finally {
     deleting.value = ''
   }

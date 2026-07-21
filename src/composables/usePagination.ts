@@ -1,9 +1,9 @@
-import { ref, computed } from 'vue'
+import { ref, computed, type MaybeRefOrGetter, toValue } from 'vue'
 
-export function usePagination(totalItems: number, perPage = 10) {
+export function usePagination(totalItems: MaybeRefOrGetter<number>, perPage = 10) {
   const currentPage = ref(1)
 
-  const totalPages = computed(() => Math.ceil(totalItems / perPage))
+  const totalPages = computed(() => Math.ceil(toValue(totalItems) / perPage))
   const hasNext = computed(() => currentPage.value < totalPages.value)
   const hasPrev = computed(() => currentPage.value > 1)
 

@@ -6,7 +6,8 @@
         <div
           :class="
             cn(
-              'relative z-10 w-full rounded-xl border bg-white p-6 shadow-lg dark:border-gray-800 dark:bg-gray-900',
+              'relative z-10 max-h-[90vh] w-full overflow-y-auto rounded-xl border bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900',
+              'p-4 sm:p-6',
               maxWidth,
             )
           "

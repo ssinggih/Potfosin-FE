@@ -17,7 +17,7 @@ function toApiPayload(data: CreateTechPayload | UpdateTechPayload) {
   if (data.name) p.name = data.name
   if (data.slug) p.slug = data.slug
   if (data.icon_url !== undefined) p.iconUrl = data.icon_url
-  return p as any
+  return p as Record<string, string>
 }
 
 export const techsApi = {

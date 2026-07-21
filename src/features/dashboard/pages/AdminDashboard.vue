@@ -35,7 +35,7 @@
           </div>
 
           <!-- OVERVIEW TAB -->
-          <div v-if="activeTab === 'overview'">
+          <div v-if="activeTab === 'overview'" class="space-y-6 pt-6">
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <Card v-for="stat in stats" :key="stat.label">
                 <template #header>
@@ -49,55 +49,103 @@
                 </p>
               </Card>
             </div>
-            <div class="mt-8 grid gap-6 lg:grid-cols-2">
+            <div class="grid gap-6 lg:grid-cols-2">
               <Card>
                 <template #header>
-                  <h2 class="font-semibold">
-                    {{ $t('dashboard.recentProjects') }}
-                  </h2>
+                  <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">
+                      {{ $t('dashboard.recentProjects') }}
+                    </h2>
+                    <div v-if="overviewProjectTotalPages > 1" class="flex items-center gap-1.5">
+                      <button
+                        :disabled="!overviewProjectHasPrev"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewProjectPrev"
+                      >
+                        <ChevronLeft class="h-3.5 w-3.5" />
+                      </button>
+                      <span
+                        class="min-w-[3rem] text-center text-xs text-gray-500 dark:text-gray-400"
+                      >
+                        {{ overviewProjectCurrentPage }} / {{ overviewProjectTotalPages }}
+                      </span>
+                      <button
+                        :disabled="!overviewProjectHasNext"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewProjectNext"
+                      >
+                        <ChevronRight class="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </template>
                 <div v-if="projectsLoading" class="py-4 text-sm text-gray-500">
                   {{ $t('common.loading') }}
                 </div>
-                <div v-else class="space-y-3">
+                <div v-else-if="!recentProjects.length" class="py-4 text-sm text-gray-500">
+                  {{ $t('common.no_data') }}
+                </div>
+                <div v-else class="grid h-[132px] grid-cols-3 content-start gap-3">
                   <div
-                    v-for="p in recentProjects"
+                    v-for="p in paginatedOverviewProjects"
                     :key="p.id"
-                    class="flex items-center justify-between rounded-lg border px-4 py-3 dark:border-gray-800"
+                    class="rounded-lg border px-3 py-2 dark:border-gray-800"
                   >
-                    <span class="text-sm font-medium">{{ p.name }}</span>
+                    <p class="truncate text-sm font-medium">
+                      {{ p.name }}
+                    </p>
                     <span
-                      class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                      class="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
                     >
                       {{ p.status }}
                     </span>
                   </div>
-                  <p v-if="!recentProjects.length" class="py-4 text-sm text-gray-500">
-                    {{ $t('common.no_data') }}
-                  </p>
                 </div>
               </Card>
               <Card>
                 <template #header>
-                  <h2 class="font-semibold">
-                    {{ $t('dashboard.techStack') }}
-                  </h2>
+                  <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">
+                      {{ $t('dashboard.techStack') }}
+                    </h2>
+                    <div v-if="overviewTechTotalPages > 1" class="flex items-center gap-1.5">
+                      <button
+                        :disabled="!overviewTechHasPrev"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewTechPrev"
+                      >
+                        <ChevronLeft class="h-3.5 w-3.5" />
+                      </button>
+                      <span
+                        class="min-w-[3rem] text-center text-xs text-gray-500 dark:text-gray-400"
+                      >
+                        {{ overviewTechCurrentPage }} / {{ overviewTechTotalPages }}
+                      </span>
+                      <button
+                        :disabled="!overviewTechHasNext"
+                        class="rounded-md border p-1 transition-colors hover:bg-gray-100 disabled:opacity-30 dark:border-gray-700 dark:hover:bg-gray-800"
+                        @click="overviewTechNext"
+                      >
+                        <ChevronRight class="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </template>
                 <div v-if="techsLoading" class="py-4 text-sm text-gray-500">
                   {{ $t('common.loading') }}
                 </div>
-                <div v-else class="flex flex-wrap gap-2">
+                <div v-else-if="!techList.length" class="py-4 text-sm text-gray-500">
+                  {{ $t('common.no_data') }}
+                </div>
+                <div v-else class="flex min-h-[132px] flex-wrap content-start gap-2">
                   <span
-                    v-for="t in techList"
+                    v-for="t in paginatedOverviewTechs"
                     :key="t.id"
                     class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm dark:border-gray-700"
                   >
                     <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-4 w-4" />
                     {{ t.name }}
                   </span>
-                  <p v-if="!techList.length" class="py-4 text-sm text-gray-500">
-                    {{ $t('common.no_data') }}
-                  </p>
                 </div>
               </Card>
             </div>
@@ -237,62 +285,92 @@
                 Tambah Tech
               </Button>
             </div>
+
+            <div class="mb-4 flex items-center gap-3">
+              <div class="relative max-w-sm flex-1">
+                <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  v-model="techSearch"
+                  type="text"
+                  placeholder="Search tech..."
+                  class="w-full rounded-lg border bg-white py-2 pr-4 pl-9 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500"
+                />
+              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400">
+                {{ filteredTechs.length }} tech{{ filteredTechs.length !== 1 ? 's' : '' }}
+              </span>
+            </div>
+
             <div v-if="techsLoading" class="py-12 text-center text-gray-500">
               {{ $t('common.loading') }}
             </div>
-            <Card v-else class="overflow-x-auto">
-              <table class="w-full text-left text-sm">
-                <thead>
-                  <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
-                    <th class="px-4 py-3 font-medium text-gray-500">Nama</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Slug</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Icon</th>
-                    <th class="px-4 py-3 font-medium text-gray-500">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="t in techList"
-                    :key="t.id"
-                    class="border-b hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900"
-                  >
-                    <td class="px-4 py-3 font-medium">
-                      {{ t.name }}
-                    </td>
-                    <td class="px-4 py-3 text-gray-500">/{{ t.slug }}</td>
-                    <td class="px-4 py-3">
-                      <img
-                        v-if="t.icon_url"
-                        :src="t.icon_url"
-                        :alt="t.name"
-                        class="h-6 w-6 object-contain"
-                        @error="onTechIconError"
-                      />
-                      <span
-                        v-else
-                        class="flex h-6 w-6 items-center justify-center rounded-md bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                        >{{ t.name.charAt(0).toUpperCase() }}</span
-                      >
-                    </td>
-                    <td class="px-4 py-3">
-                      <div class="flex gap-2">
-                        <Button variant="ghost" size="sm" @click="openTechForm(t)">
-                          <Edit class="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="sm" @click="confirmDeleteTech(t.id)">
-                          <Trash2 class="h-3.5 w-3.5 text-red-500" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr v-if="!techList.length">
-                    <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                      {{ $t('common.no_data') }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Card>
+            <template v-else>
+              <Card class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead>
+                    <tr class="border-b bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+                      <th class="px-4 py-3 font-medium text-gray-500">Nama</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Slug</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Icon</th>
+                      <th class="px-4 py-3 font-medium text-gray-500">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="t in paginatedTechs"
+                      :key="t.id"
+                      class="border-b hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900"
+                    >
+                      <td class="px-4 py-3 font-medium">
+                        {{ t.name }}
+                      </td>
+                      <td class="px-4 py-3 text-gray-500">/{{ t.slug }}</td>
+                      <td class="px-4 py-3">
+                        <img
+                          v-if="t.icon_url"
+                          :src="proxyR2Url(t.icon_url)"
+                          :alt="t.name"
+                          class="h-6 w-6 object-contain"
+                          @error="onTechIconError"
+                        />
+                        <span
+                          v-else
+                          class="flex h-6 w-6 items-center justify-center rounded-md bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                          >{{ t.name.charAt(0).toUpperCase() }}</span
+                        >
+                      </td>
+                      <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                          <Button variant="ghost" size="sm" @click="openTechForm(t)">
+                            <Edit class="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" @click="confirmDeleteTech(t.id)">
+                            <Trash2 class="h-3.5 w-3.5 text-red-500" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="!filteredTechs.length">
+                      <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                        {{ techSearch ? 'No tech found.' : $t('common.no_data') }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Card>
+
+              <div v-if="techTotalPages > 1" class="mt-4 flex items-center justify-center gap-2">
+                <Button variant="outline" size="sm" :disabled="!techHasPrev" @click="techPrev">
+                  <ChevronLeft class="h-4 w-4" />
+                </Button>
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                  {{ techCurrentPage }} / {{ techTotalPages }}
+                </span>
+                <Button variant="outline" size="sm" :disabled="!techHasNext" @click="techNext">
+                  <ChevronRight class="h-4 w-4" />
+                </Button>
+              </div>
+            </template>
           </div>
 
           <!-- IMAGES TAB -->
@@ -307,7 +385,7 @@
     <!-- Project Form Modal -->
     <Modal
       :open="projectFormOpen"
-      max-width="max-w-xl"
+      max-width="max-w-2xl"
       :title="editingProject ? 'Edit Project' : 'Tambah Project'"
       @close="closeProjectForm"
     >
@@ -317,7 +395,7 @@
         :initial-values="projectInitialValues"
         @submit="submitProject"
       >
-        <div class="space-y-4">
+        <div class="space-y-3">
           <FormField name="name" label="Nama Project" placeholder="Nama project" />
           <FormField
             name="description"
@@ -325,7 +403,7 @@
             type="textarea"
             placeholder="Deskripsi project"
           />
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FormField name="status" label="Status" type="select">
               <option value="complete">Complete</option>
               <option value="progress">Progress</option>
@@ -354,7 +432,7 @@
             type="url"
             placeholder="https://figma.com/..."
           />
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <FormField name="startDate" label="Start Date" type="date" />
             <FormField name="endDate" label="End Date" type="date" />
             <FormField name="priority" label="Prioritas (1-100)" type="number" placeholder="50" />
@@ -363,30 +441,45 @@
             <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >Technologies</label
             >
-            <div
-              v-if="techList.length"
-              class="flex max-h-32 flex-wrap gap-2 overflow-y-auto rounded-lg border p-3 dark:border-gray-700"
-            >
-              <label
-                v-for="t in techList"
-                :key="t.id"
-                class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                :class="
-                  selectedTechIds.includes(t.id)
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                    : ''
-                "
-              >
-                <input
-                  type="checkbox"
-                  :value="t.id"
-                  :checked="selectedTechIds.includes(t.id)"
-                  class="sr-only"
-                  @change="toggleTechId(t.id)"
+            <div v-if="techList.length">
+              <div class="relative mb-2">
+                <Search
+                  class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
                 />
-                <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-4 w-4" />
-                {{ t.name }}
-              </label>
+                <input
+                  v-model="techSearchFilter"
+                  type="text"
+                  placeholder="Search tech..."
+                  class="w-full rounded-lg border bg-white py-1.5 pr-3 pl-8 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500"
+                />
+              </div>
+              <div
+                class="flex max-h-24 flex-wrap gap-1.5 overflow-y-auto rounded-lg border-2 border-gray-200 p-2 dark:border-gray-600"
+              >
+                <label
+                  v-for="t in filteredTechsForProject"
+                  :key="t.id"
+                  class="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-0.5 text-xs transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                  :class="
+                    selectedTechIds.includes(t.id)
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                      : ''
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    :value="t.id"
+                    :checked="selectedTechIds.includes(t.id)"
+                    class="sr-only"
+                    @change="toggleTechId(t.id)"
+                  />
+                  <img v-if="t.icon_url" :src="t.icon_url" :alt="t.name" class="h-3.5 w-3.5" />
+                  {{ t.name }}
+                </label>
+                <p v-if="!filteredTechsForProject.length" class="py-1 text-xs text-gray-400">
+                  No tech found.
+                </p>
+              </div>
             </div>
             <p v-else class="text-sm text-gray-500">Loading techs...</p>
           </div>
@@ -420,7 +513,7 @@
         :initial-values="editingTech ?? undefined"
         @submit="submitTech"
       >
-        <div class="space-y-4">
+        <div class="space-y-3">
           <FormField name="name" label="Name" placeholder="React" />
           <FormField name="slug" label="Slug" placeholder="react" />
           <FormField
@@ -435,7 +528,7 @@
           >
             {{ techError }}
           </p>
-          <div class="flex justify-end gap-3 pt-4">
+          <div class="flex justify-end gap-3 pt-2">
             <Button variant="outline" @click="closeTechForm"> Batal </Button>
             <Button type="submit" :disabled="techSubmitting">
               {{ techSubmitting ? 'Menyimpan...' : editingTech ? 'Update' : 'Simpan' }}
@@ -453,7 +546,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Form as VeeForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -477,6 +570,8 @@ import AdminHeader from '../components/AdminHeader.vue'
 import FloatingActions from '@components/layout/FloatingActions.vue'
 import ProjectDetailModal from '@features/projects/components/ProjectDetailModal.vue'
 import AdminImagesTab from '../components/AdminImagesTab.vue'
+import { proxyR2Url } from '@/utils/proxy'
+import { usePagination } from '@/composables/usePagination'
 import {
   FolderGit2,
   Code2,
@@ -491,6 +586,9 @@ import {
   Users,
   ImageIcon,
   LayoutDashboard,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -524,6 +622,73 @@ const projectNameMap = computed(() => {
 })
 
 const recentProjects = computed(() => projectList.value.slice(0, 5))
+
+// ---- Overview Projects Pagination ----
+const {
+  currentPage: overviewProjectCurrentPage,
+  totalPages: overviewProjectTotalPages,
+  hasNext: overviewProjectHasNext,
+  hasPrev: overviewProjectHasPrev,
+  next: overviewProjectNext,
+  prev: overviewProjectPrev,
+} = usePagination(
+  computed(() => projectList.value.length),
+  6,
+)
+
+const paginatedOverviewProjects = computed(() => {
+  const start = (overviewProjectCurrentPage.value - 1) * 6
+  return projectList.value.slice(start, start + 6)
+})
+
+// ---- Overview Techs Pagination ----
+const {
+  currentPage: overviewTechCurrentPage,
+  totalPages: overviewTechTotalPages,
+  hasNext: overviewTechHasNext,
+  hasPrev: overviewTechHasPrev,
+  next: overviewTechNext,
+  prev: overviewTechPrev,
+} = usePagination(
+  computed(() => techList.value.length),
+  6,
+)
+
+const paginatedOverviewTechs = computed(() => {
+  const start = (overviewTechCurrentPage.value - 1) * 6
+  return techList.value.slice(start, start + 6)
+})
+
+// ---- Tech Search & Pagination ----
+const techSearch = ref('')
+
+const filteredTechs = computed(() => {
+  const list = techList.value
+  if (!techSearch.value) return list
+  const q = techSearch.value.toLowerCase()
+  return list.filter((t) => t.name.toLowerCase().includes(q) || t.slug.toLowerCase().includes(q))
+})
+
+const {
+  currentPage: techCurrentPage,
+  totalPages: techTotalPages,
+  hasNext: techHasNext,
+  hasPrev: techHasPrev,
+  next: techNext,
+  prev: techPrev,
+} = usePagination(
+  computed(() => filteredTechs.value.length),
+  10,
+)
+
+watch(techSearch, () => {
+  techCurrentPage.value = 1
+})
+
+const paginatedTechs = computed(() => {
+  const start = (techCurrentPage.value - 1) * 10
+  return filteredTechs.value.slice(start, start + 10)
+})
 
 const stats = computed(() => [
   { label: 'Total Projects', value: projectList.value.length, icon: FolderGit2 },
@@ -588,6 +753,15 @@ const editingProject = ref<Project | null>(null)
 const selectedTechIds = ref<string[]>([])
 const projectError = ref('')
 const projectSubmitting = ref(false)
+const techSearchFilter = ref('')
+
+const filteredTechsForProject = computed(() => {
+  if (!techSearchFilter.value) return techList.value
+  const q = techSearchFilter.value.toLowerCase()
+  return techList.value.filter(
+    (t) => t.name.toLowerCase().includes(q) || t.slug.toLowerCase().includes(q),
+  )
+})
 
 const projectInitialValues = computed(() => ({
   name: editingProject.value?.name ?? '',
@@ -621,6 +795,7 @@ function openProjectForm(project: Project | null) {
   editingProject.value = project
   selectedTechIds.value = project?.techs.map((t) => t.id) ?? []
   projectError.value = ''
+  techSearchFilter.value = ''
   projectFormOpen.value = true
 }
 
@@ -629,6 +804,7 @@ function closeProjectForm() {
   editingProject.value = null
   selectedTechIds.value = []
   projectError.value = ''
+  techSearchFilter.value = ''
 }
 
 function toggleTechId(id: string) {
@@ -640,23 +816,23 @@ function toggleTechId(id: string) {
   }
 }
 
-async function submitProject(values: any) {
+async function submitProject(values: Record<string, unknown>) {
   projectError.value = ''
   projectSubmitting.value = true
   try {
     const payload = {
-      name: values.name,
-      description: values.description,
-      status: values.status,
-      teamType: values.teamType,
-      experience: values.experience,
+      name: values.name as string,
+      description: values.description as string,
+      status: values.status as 'complete' | 'progress' | 'paused',
+      teamType: values.teamType as 'solo' | 'team',
+      experience: values.experience as string,
       techIds: selectedTechIds.value,
       ownerId: authStore.user?.id || '',
-      githubLink: values.githubLink || undefined,
-      designLink: values.designLink || undefined,
-      startDate: values.startDate || null,
-      endDate: values.endDate || null,
-      priority: values.priority ?? 50,
+      githubLink: (values.githubLink as string) || undefined,
+      designLink: (values.designLink as string) || undefined,
+      startDate: (values.startDate as string) || null,
+      endDate: (values.endDate as string) || null,
+      priority: (values.priority as number) ?? 50,
     }
     if (editingProject.value) {
       await updateProjectMutate({ id: editingProject.value.id, data: payload })
@@ -664,8 +840,9 @@ async function submitProject(values: any) {
       await createProject(payload)
     }
     closeProjectForm()
-  } catch (e: any) {
-    projectError.value = e?.response?.data?.message || e?.message || 'Gagal menyimpan project'
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    projectError.value = err?.response?.data?.message || err?.message || 'Gagal menyimpan project'
   } finally {
     projectSubmitting.value = false
   }
@@ -676,8 +853,9 @@ async function confirmDeleteProject(id: string) {
   try {
     await deleteProjectMutate(id)
     alert('Project berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus project')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus project')
   }
 }
 
@@ -716,20 +894,26 @@ function closeTechForm() {
   techError.value = ''
 }
 
-async function submitTech(values: any) {
+async function submitTech(values: Record<string, unknown>) {
   techError.value = ''
   techSubmitting.value = true
   try {
+    const payload = {
+      name: values.name as string,
+      slug: values.slug as string,
+      icon_url: (values.icon_url as string) || '',
+    }
     if (editingTech.value) {
-      await updateTechMutate({ id: editingTech.value.id, data: values })
+      await updateTechMutate({ id: editingTech.value.id, data: payload })
       alert('Tech berhasil diupdate!')
     } else {
-      await createTechMutate(values)
+      await createTechMutate(payload)
       alert('Tech berhasil ditambahkan!')
     }
     closeTechForm()
-  } catch (e: any) {
-    techError.value = e?.response?.data?.message || e?.message || 'Gagal menyimpan tech'
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    techError.value = err?.response?.data?.message || err?.message || 'Gagal menyimpan tech'
   } finally {
     techSubmitting.value = false
   }
@@ -740,8 +924,9 @@ async function confirmDeleteTech(id: string) {
   try {
     await deleteTechMutate(id)
     alert('Tech berhasil dihapus!')
-  } catch (e: any) {
-    alert(e?.response?.data?.message || e?.message || 'Gagal hapus tech')
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    alert(err?.response?.data?.message || err?.message || 'Gagal hapus tech')
   }
 }
 </script>

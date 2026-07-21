@@ -19,13 +19,13 @@
         >
           <div v-if="mockupImage" class="relative h-56 overflow-hidden sm:h-72">
             <img
-              :src="mockupImage.url"
+              :src="proxyR2Url(mockupImage.url)"
               :alt="project.name"
               class="h-full w-full object-cover"
               @error="onGalleryImgError"
             />
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"
+              class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"
             />
             <div class="absolute right-4 bottom-4 left-4 sm:bottom-6 sm:left-6">
               <div class="flex flex-wrap items-center gap-2">
@@ -113,7 +113,7 @@
               >
                 <img
                   v-if="tech.icon_url"
-                  :src="tech.icon_url"
+                  :src="proxyR2Url(tech.icon_url)"
                   :alt="tech.name"
                   class="h-3.5 w-3.5 object-contain"
                   @error="onTechIconError"
@@ -182,15 +182,15 @@
               v-for="img in images"
               :key="img.id"
               class="group relative cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800"
-              @click="lightboxUrl = img.url"
+              @click="lightboxUrl = proxyR2Url(img.url)"
             >
               <img
-                :src="img.url"
+                :src="proxyR2Url(img.url)"
                 :alt="img.type"
                 class="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 @error="onGalleryImgError"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <div class="absolute bottom-3 left-3">
                 <span
                   class="rounded-md bg-black/40 px-2 py-0.5 text-xs text-white/90 capitalize backdrop-blur-sm"
@@ -244,6 +244,7 @@ import { useProjectImages } from '@features/uploads'
 import { Button } from '@components/ui'
 import SkeletonDetail from '@components/ui/SkeletonDetail.vue'
 import { formatDate } from '@/utils/format'
+import { proxyR2Url } from '@/utils/proxy'
 import { ChevronLeft, Users, Calendar, Github, Figma, Loader2, ImageIcon, X } from 'lucide-vue-next'
 
 const route = useRoute()
