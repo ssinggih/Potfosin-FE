@@ -9,6 +9,11 @@ export interface Project {
   githubLink?: string
   designLink?: string
   demoLink?: string
+  demoUrl?: string
+  role?: string
+  keyFeatures?: string[]
+  results?: string
+  challenges?: string
   status: 'complete' | 'progress' | 'paused'
   experience: string
   startDate?: string | null
@@ -42,6 +47,11 @@ export type CreateProjectPayload = {
   teamType: 'solo' | 'team'
   githubLink?: string
   designLink?: string
+  demoUrl?: string
+  role?: string
+  keyFeatures?: string[]
+  results?: string
+  challenges?: string
   status: 'complete' | 'progress' | 'paused'
   experience: string
   techIds: string[]

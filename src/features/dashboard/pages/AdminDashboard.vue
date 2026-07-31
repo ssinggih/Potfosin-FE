@@ -95,7 +95,8 @@
                       {{ p.name }}
                     </p>
                     <span
-                      class="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                      class="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                      :class="statusClass(p.status)"
                     >
                       {{ p.status }}
                     </span>
@@ -414,6 +415,31 @@
               <option value="team">Team</option>
             </FormField>
           </div>
+          <FormField name="role" label="Role" placeholder="Frontend Developer, Fullstack, dll" />
+          <FormField
+            name="demoUrl"
+            label="Demo URL"
+            type="url"
+            placeholder="https://project-demo.vercel.app"
+          />
+          <FormField
+            name="keyFeatures"
+            label="Key Features (1 per baris)"
+            type="textarea"
+            placeholder="Fitur 1&#10;Fitur 2&#10;Fitur 3"
+          />
+          <FormField
+            name="results"
+            label="Results / Dampak"
+            type="textarea"
+            placeholder="Contoh: Dipakai oleh 500+ user, performa meningkat 60%"
+          />
+          <FormField
+            name="challenges"
+            label="Challenges"
+            type="textarea"
+            placeholder="Tantangan teknis dan cara mengatasinya"
+          />
           <FormField
             name="experience"
             label="Pengalaman"
@@ -768,6 +794,11 @@ const projectInitialValues = computed(() => ({
   description: editingProject.value?.description ?? '',
   status: editingProject.value?.status ?? 'progress',
   teamType: editingProject.value?.teamType ?? 'solo',
+  role: editingProject.value?.role ?? '',
+  demoUrl: editingProject.value?.demoUrl ?? '',
+  keyFeatures: editingProject.value?.keyFeatures?.join('\n') ?? '',
+  results: editingProject.value?.results ?? '',
+  challenges: editingProject.value?.challenges ?? '',
   experience: editingProject.value?.experience ?? '',
   githubLink: editingProject.value?.githubLink ?? '',
   designLink: editingProject.value?.designLink ?? '',
@@ -782,6 +813,11 @@ const projectSchema = toTypedSchema(
     description: z.string().min(1, 'Deskripsi wajib diisi'),
     status: z.enum(['complete', 'progress', 'paused']),
     teamType: z.enum(['solo', 'team']),
+    role: z.string().optional().or(z.literal('')),
+    demoUrl: z.string().url('URL tidak valid').optional().or(z.literal('')),
+    keyFeatures: z.string().optional().or(z.literal('')),
+    results: z.string().optional().or(z.literal('')),
+    challenges: z.string().optional().or(z.literal('')),
     experience: z.string().min(1, 'Pengalaman wajib diisi'),
     githubLink: z.string().url('URL tidak valid').optional().or(z.literal('')),
     designLink: z.string().url('URL tidak valid').optional().or(z.literal('')),
@@ -820,16 +856,28 @@ async function submitProject(values: Record<string, unknown>) {
   projectError.value = ''
   projectSubmitting.value = true
   try {
+    const rawFeatures = (values.keyFeatures as string) || ''
+    const features = rawFeatures
+      ? rawFeatures
+          .split('\n')
+          .map((f) => f.trim())
+          .filter(Boolean)
+      : []
     const payload = {
       name: values.name as string,
       description: values.description as string,
       status: values.status as 'complete' | 'progress' | 'paused',
       teamType: values.teamType as 'solo' | 'team',
+      role: values.role as string,
+      demoUrl: values.demoUrl as string,
+      keyFeatures: features,
+      results: values.results as string,
+      challenges: values.challenges as string,
       experience: values.experience as string,
       techIds: selectedTechIds.value,
       ownerId: authStore.user?.id || '',
-      githubLink: (values.githubLink as string) || undefined,
-      designLink: (values.designLink as string) || undefined,
+      githubLink: values.githubLink as string,
+      designLink: values.designLink as string,
       startDate: (values.startDate as string) || null,
       endDate: (values.endDate as string) || null,
       priority: (values.priority as number) ?? 50,

@@ -89,9 +89,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@features/auth'
+import { useLocaleStore } from '@/stores/localeStore'
 import { NAV_ITEMS, SECTION_IDS } from '@/constants'
 import { Menu, X } from 'lucide-vue-next'
 
@@ -100,6 +101,7 @@ const emit = defineEmits<{
 }>()
 const router = useRouter()
 const authStore = useAuthStore()
+const localeStore = useLocaleStore()
 const isMobileOpen = ref(false)
 const isScrolled = ref(false)
 const activeSection = ref(SECTION_IDS.HERO)
@@ -181,6 +183,15 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
+
+watch(
+  () => localeStore.locale,
+  () => {
+    nextTick(() => {
+      updateNavPositions()
+    })
+  },
+)
 </script>
 
 <style scoped>

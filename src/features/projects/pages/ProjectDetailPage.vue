@@ -42,6 +42,13 @@
                   <Users class="mr-1 inline h-3 w-3" />
                   {{ project.teamType }}
                 </span>
+                <span
+                  v-if="project.role"
+                  class="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-0.5 text-xs font-medium text-white shadow-sm backdrop-blur-sm"
+                >
+                  <UserCheck class="h-3 w-3" />
+                  {{ project.role }}
+                </span>
               </div>
               <h1 class="mt-2 text-2xl font-bold text-white sm:text-3xl">
                 {{ project.name }}
@@ -64,9 +71,19 @@
                 >
                   {{ project.status }}
                 </span>
-                <span class="text-xs text-gray-500">
-                  <Users class="mr-1 inline h-3 w-3" />
+                <span
+                  v-if="project.teamType"
+                  class="inline-flex items-center gap-1 rounded-full border px-3 py-0.5 text-xs font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300"
+                >
+                  <Users class="h-3 w-3" />
                   {{ project.teamType }}
+                </span>
+                <span
+                  v-if="project.role"
+                  class="inline-flex items-center gap-1 rounded-full border px-3 py-0.5 text-xs font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300"
+                >
+                  <UserCheck class="h-3 w-3" />
+                  {{ project.role }}
                 </span>
               </div>
               <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-gray-100">
@@ -103,6 +120,17 @@
                 <Figma class="h-4 w-4" />
                 Design
               </Button>
+              <Button
+                v-if="project.demoUrl"
+                variant="outline"
+                size="sm"
+                as="a"
+                :href="project.demoUrl"
+                target="_blank"
+              >
+                <ExternalLink class="h-4 w-4" />
+                Live Demo
+              </Button>
             </div>
 
             <div class="mt-6 flex flex-wrap gap-2 border-t pt-6 dark:border-gray-800">
@@ -129,13 +157,13 @@
           </div>
         </div>
 
-        <div class="mb-8 grid gap-6 lg:grid-cols-2">
+        <div class="mb-8 grid gap-6">
           <div
             v-if="project.description"
             class="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
           >
             <h2
-              class="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+              class="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
             >
               <span
                 class="flex h-6 w-6 items-center justify-center rounded-md bg-blue-100 text-xs text-blue-600 dark:bg-blue-900 dark:text-blue-300"
@@ -143,9 +171,73 @@
               >
               Description
             </h2>
-            <p class="leading-relaxed text-gray-700 dark:text-gray-300">
+            <div class="text-sm leading-7 whitespace-pre-line text-gray-700 dark:text-gray-300">
               {{ project.description }}
-            </p>
+            </div>
+          </div>
+
+          <div
+            v-if="project.keyFeatures?.length"
+            class="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+          >
+            <h2
+              class="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-md bg-green-100 text-xs text-green-600 dark:bg-green-900 dark:text-green-300"
+              >
+                <ListChecks class="h-4 w-4" />
+              </span>
+              Key Features
+            </h2>
+            <ul class="space-y-2">
+              <li
+                v-for="(feature, i) in project.keyFeatures"
+                :key="i"
+                class="flex items-start gap-2 text-sm leading-6 text-gray-700 dark:text-gray-300"
+              >
+                <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                {{ feature }}
+              </li>
+            </ul>
+          </div>
+
+          <div
+            v-if="project.challenges"
+            class="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+          >
+            <h2
+              class="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-md bg-purple-100 text-xs text-purple-600 dark:bg-purple-900 dark:text-purple-300"
+              >
+                <Lightbulb class="h-4 w-4" />
+              </span>
+              Challenges
+            </h2>
+            <div class="text-sm leading-7 whitespace-pre-line text-gray-700 dark:text-gray-300">
+              {{ project.challenges }}
+            </div>
+          </div>
+
+          <div
+            v-if="project.results"
+            class="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+          >
+            <h2
+              class="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100 text-xs text-emerald-600 dark:bg-emerald-900 dark:text-emerald-300"
+              >
+                <TrendingUp class="h-4 w-4" />
+              </span>
+              Results
+            </h2>
+            <div class="text-sm leading-7 whitespace-pre-line text-gray-700 dark:text-gray-300">
+              {{ project.results }}
+            </div>
           </div>
 
           <div
@@ -153,7 +245,7 @@
             class="rounded-xl border bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
           >
             <h2
-              class="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+              class="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
             >
               <span
                 class="flex h-6 w-6 items-center justify-center rounded-md bg-amber-100 text-xs text-amber-600 dark:bg-amber-900 dark:text-amber-300"
@@ -161,9 +253,9 @@
               >
               Experience
             </h2>
-            <p class="leading-relaxed text-gray-700 dark:text-gray-300">
+            <div class="text-sm leading-7 whitespace-pre-line text-gray-700 dark:text-gray-300">
               {{ project.experience }}
-            </p>
+            </div>
           </div>
         </div>
 
@@ -245,7 +337,21 @@ import { Button } from '@components/ui'
 import SkeletonDetail from '@components/ui/SkeletonDetail.vue'
 import { formatDate } from '@/utils/format'
 import { proxyR2Url } from '@/utils/proxy'
-import { ChevronLeft, Users, Calendar, Github, Figma, Loader2, ImageIcon, X } from 'lucide-vue-next'
+import {
+  ChevronLeft,
+  Users,
+  Calendar,
+  Github,
+  Figma,
+  Loader2,
+  ImageIcon,
+  X,
+  ExternalLink,
+  ListChecks,
+  Lightbulb,
+  TrendingUp,
+  UserCheck,
+} from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
