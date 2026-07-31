@@ -35,6 +35,12 @@
         <p class="mt-0.5 text-xs text-gray-500">
           {{ project.teamType }} &middot; {{ formatDate(project.createdAt) }}
         </p>
+        <p
+          v-if="project.role"
+          class="mt-1 inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+        >
+          {{ project.role }}
+        </p>
         <p v-if="project.startDate || project.endDate" class="mt-0.5 text-xs text-gray-400">
           <template v-if="project.startDate">
             {{ formatDate(project.startDate) }}
