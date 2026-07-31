@@ -10,6 +10,8 @@
           placeholder="Describe your project..."
         />
 
+        <FormField name="role" label="Role" placeholder="Frontend Developer, Fullstack, dll" />
+
         <div class="grid gap-4 sm:grid-cols-2">
           <FormField
             name="githubLink"
@@ -24,6 +26,34 @@
             placeholder="https://figma.com/file/..."
           />
         </div>
+
+        <FormField
+          name="demoUrl"
+          label="Demo URL"
+          type="url"
+          placeholder="https://project-demo.vercel.app"
+        />
+
+        <FormField
+          name="keyFeatures"
+          label="Key Features (1 per line)"
+          type="textarea"
+          placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
+        />
+
+        <FormField
+          name="results"
+          label="Results / Impact"
+          type="textarea"
+          placeholder="E.g.: 500+ users, 60% performance improvement"
+        />
+
+        <FormField
+          name="challenges"
+          label="Challenges"
+          type="textarea"
+          placeholder="Technical challenges and how you solved them"
+        />
 
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="space-y-1.5">
@@ -130,8 +160,13 @@ const schema = toTypedSchema(
     name: z.string().min(1, 'Name wajib diisi'),
     description: z.string().min(1, 'Description wajib diisi'),
     teamType: z.enum(['solo', 'team']),
+    role: z.string().optional().or(z.literal('')),
     githubLink: z.string().url('URL tidak valid').optional().or(z.literal('')),
     designLink: z.string().url('URL tidak valid').optional().or(z.literal('')),
+    demoUrl: z.string().url('URL tidak valid').optional().or(z.literal('')),
+    keyFeatures: z.string().optional().or(z.literal('')),
+    results: z.string().optional().or(z.literal('')),
+    challenges: z.string().optional().or(z.literal('')),
     status: z.enum(['complete', 'progress', 'paused']),
     experience: z.string().min(1, 'Experience wajib diisi'),
   }),
@@ -141,8 +176,13 @@ const initialValues = {
   name: props.project?.name ?? '',
   description: props.project?.description ?? '',
   teamType: props.project?.teamType ?? 'solo',
+  role: props.project?.role ?? '',
   githubLink: props.project?.githubLink ?? '',
   designLink: props.project?.designLink ?? '',
+  demoUrl: props.project?.demoUrl ?? '',
+  keyFeatures: props.project?.keyFeatures?.join('\n') ?? '',
+  results: props.project?.results ?? '',
+  challenges: props.project?.challenges ?? '',
   status: props.project?.status ?? 'progress',
   experience: props.project?.experience ?? '',
 }
@@ -157,6 +197,17 @@ function toggleTech(id: string) {
 }
 
 function onSubmit(values: Record<string, unknown>) {
-  emit('submit', { ...values, techIds: selectedTechIds.value })
+  const rawFeatures = (values.keyFeatures as string) || ''
+  const features = rawFeatures
+    ? rawFeatures
+        .split('\n')
+        .map((f) => f.trim())
+        .filter(Boolean)
+    : []
+  emit('submit', {
+    ...values,
+    keyFeatures: features,
+    techIds: selectedTechIds.value,
+  })
 }
 </script>
